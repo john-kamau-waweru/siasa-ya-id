@@ -106,17 +106,6 @@ export default function Grievances() {
     fetchGrievances();
   }, []);
 
-  useEffect(() => {
-    setFormattedDate(
-      new Date(grievance.createdAt).toLocaleDateString("en-US", {
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })
-    );
-  }, [grievance.createdAt]);
-
   const handleFilterChange = (e) => {
     setFilters({ ...filters, [e.target.name]: e.target.value });
   };
@@ -209,8 +198,12 @@ export default function Grievances() {
                 <p className="text-sm text-gray-500 mt-2">
                   {g?.county}, {g?.subCounty} -
                   <span className="text-xs text-gray-500 mt-2">
-                    {" "}
-                    {formattedDate}
+                    {new Date(g.createdAt).toLocaleDateString("en-US", {
+                      weekday: "long",
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
                   </span>
                 </p>
                 <div className="flex gap-4 mt-4">
