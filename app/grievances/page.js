@@ -82,6 +82,7 @@ const counties = [
 export default function Grievances() {
   const [grievances, setGrievances] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [formattedDate, setFormattedDate] = useState("");
   const [filters, setFilters] = useState({
     keyword: "",
     county: "",
@@ -104,6 +105,17 @@ export default function Grievances() {
 
     fetchGrievances();
   }, []);
+
+  useEffect(() => {
+    setFormattedDate(
+      new Date(grievance.createdAt).toLocaleDateString("en-US", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    );
+  }, [grievance.createdAt]);
 
   const handleFilterChange = (e) => {
     setFilters({ ...filters, [e.target.name]: e.target.value });
@@ -198,12 +210,7 @@ export default function Grievances() {
                   {g?.county}, {g?.subCounty} -
                   <span className="text-xs text-gray-500 mt-2">
                     {" "}
-                    {new Date(g.createdAt).toLocaleDateString("en-US", {
-                      weekday: "long",
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
+                    {formattedDate}
                   </span>
                 </p>
                 <div className="flex gap-4 mt-4">
