@@ -44,3 +44,16 @@ export async function POST(req) {
     );
   }
 }
+
+// ✅ Handle GET request (Fetch all grievances)
+export async function GET() {
+  try {
+    const grievances = await Grievance.find().sort({ createdAt: -1 });
+    return NextResponse.json(grievances, { status: 200 });
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Failed to fetch grievances" },
+      { status: 500 }
+    );
+  }
+}
