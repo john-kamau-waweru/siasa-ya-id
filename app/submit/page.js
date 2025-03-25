@@ -2,6 +2,8 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { toast, Toaster } from "react-hot-toast";
 
 const counties = [
   { name: "Mombasa", code: 1 },
@@ -54,6 +56,8 @@ const counties = [
 ];
 
 export default function Submit() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     name: "",
@@ -69,6 +73,34 @@ export default function Submit() {
   const nextStep = () => {
     if (step === 3 && !formData.story) return;
     setStep(step + 1);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/grievances", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (res.ok) {
+        toast.success("Grievance submitted successfully!");
+        setFormData({ name: "", county: "", subCounty: "", story: "" }); // Clear form
+
+        setTimeout(() => {
+          router.push("/grievances"); // Redirect smoothly
+        }, 1500);
+      } else {
+        toast.error("Failed to submit. Try again!");
+      }
+    } catch (error) {
+      toast.error("Something went wrong!");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -88,7 +120,7 @@ export default function Submit() {
           <p className="text-white/70 text-lg">Let Kenya hear your story</p>
         </div>
 
-        <form className="space-y-6 px-4">
+        <form className="space-y-6 px-4" onSubmit={handleSubmit}>
           {step === 1 && (
             <div className="space-y-2">
               <label className="text-lg font-medium text-white flex flex-col mb-2">
@@ -184,6 +216,7 @@ export default function Submit() {
               type={step === 3 ? "submit" : "button"}
               className="inline-flex items-center justify-center text-sm border border-[#ED1D24] shadow h-9 bg-[#ED1D24] text-white font-medium rounded-full px-6 py-3 transition-all hover:scale-105"
               onClick={step === 3 ? undefined : nextStep}
+              disabled={loading}
             >
               {step === 3 ? "Submit" : "Next"}
             </button>
