@@ -69,6 +69,10 @@ export default function Home() {
             Other experiences
           </Link>
         </div>
+
+        <div className="mt-10 text-center text-white/50 text-sm">
+          <p>Siasa Place © 2025</p>
+        </div>
       </section>
     </main>
   );
